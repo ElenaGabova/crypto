@@ -1,0 +1,32 @@
+CC = gcc
+LD = ld
+CFLAGS = -Wall -std=c99 -I include/
+LDFLAGS=
+
+
+aes_test_sources = example_ref.c aes_output_ref.c sbox.c
+aes_test_files = $(addprefix source/,$(aes_test_sources))
+cbc_test_sources  = aes_output_ref.c cbc_test_ref.c aes_cbc_ref.c
+cbc_test_files = $(addprefix source/,$(cbc_test_sources))
+cbc_file_test_sources = aes_ref.c cbc.c aes_cbc_ref.c
+cbc_file_test_files = $(addprefix source/,$(cbc_file_test_sources))
+
+programs := $(addprefix output/, aes_test_ref cbc_test_ref crypto_ref)
+all: $(programs) 
+
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+output/aes_test_ref: $(aes_test_files)
+	$(CC) $(CFLAGS) $(LDFLAGS)  $(filter %.o %.c,$^)  -o $@
+
+output/cbc_test_ref: $(cbc_test_files)
+	$(CC) $(CFLAGS) $(LDFLAGS)  $(filter %.o %.c,$^)  -o $@
+
+output/crypto_ref: $(cbc_file_test_files)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o %.c,$^) -o $@
+
+
+clean:
+	-rm -rf *.o *~ test whirlpool_test

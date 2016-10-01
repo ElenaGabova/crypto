@@ -1,0 +1,23 @@
+CC = gcc
+LD = ld
+CFLAGS = -Wall -std=c99 -I include/
+LDFLAGS=
+
+
+OBJECTS =  whirlpool_ref.c galois.c file_library.c whirlpool_test_ref.c 
+OBJECT_FILES = $(addprefix source/,$(OBJECTS))
+
+programs := $(addprefix output/,  whirlpool_test_ref)
+all: $(programs) 
+
+include $(sources:.c=.d)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+
+output/whirlpool_test_ref: $(OBJECT_FILES)
+	$(CC) $(CFLAGS) $(LDFLAGS)  $(filter %.o %.c,$^)  -o $@
+
+clean:
+	-rm -rf *.o *~ test whirlpool_test

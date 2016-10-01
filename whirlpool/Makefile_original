@@ -1,0 +1,23 @@
+CC = gcc
+LD = ld
+
+
+CFLAGS = -Wall -std=c99 -I headers/
+LDFLAGS=
+SOURCES = sources/whirlpool_original.c 
+OBJECTS = $(SOURCES:.c = .o)
+
+programs := $(addprefix output/,  whirlpool_original_test)
+all: $(programs) 
+
+include $(sources:.c=.d)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+
+output/whirlpool_original_test: $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS)  $(filter %.o %.c,$^)  -o $@
+
+clean:
+	-rm -rf *.o *~ test whirlpool_test
